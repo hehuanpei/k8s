@@ -1,0 +1,28 @@
+<table class="table table-hover " id="service-table">
+    <caption>{{ result.caption }}</caption>
+    <thead>
+    <tr>
+        {% for item in result.headers %}
+            <th>{{ item }}</th>
+        {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+    {% for item in result.items %}
+        <tr>
+            {% for eny in item %}
+                <td>{{ eny }}</td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+    </tbody>
+    <tfoot>
+    <tr>
+        {% for item in result.headers %}
+            <th>{{ item }}</th>
+        {% endfor %}
+    </tr>
+    </tfoot>
+</table>
+
+

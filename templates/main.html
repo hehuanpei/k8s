@@ -1,0 +1,90 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>PCI- K8S 容器管理平台</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-message-box@2.2.3/src/messagebox.css">
+    <link rel="stylesheet" href="{% static 'plugins/pace/pace.min.css' %}">
+    <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="http://mindmup.github.io/editable-table/mindmup-editabletable.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-message-box@2.2.3/src/messagebox.min.js"></script>
+    <script src="{% static 'plugins/pace/pace.min.js' %}"></script>
+</head>
+<body>
+<div class="container">
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">PCI K8S 容器管理平台</a>
+            </div>
+            <form class="navbar-form navbar-left pull-right" role="search">
+                <div class="form-group">
+                    <label for="k8s-api"></label>
+                    <select class=" form-control" id="k8s-api">
+                        <option value="#">选择集群</option>
+                        {% for cluster in result.clusters %}
+                            <option value="{{ cluster.id }}">{{ cluster.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        选择类型 <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="javascript:void(0);" onclick="load_table('/list_pod/')">Pod</a></li>
+                        <li class="divider"></li>
+                        <li><a href="javascript:void(0);" onclick="load_table('/list_service/')">Service</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div id="table-div"></div>
+</div>
+
+
+<script type="application/javascript">
+    $(document).ajaxStart(function () {
+        Pace.restart()
+    });
+
+    function load_table(url_method) {
+
+        console.log(url_method);
+
+        k8s_select = $("#k8s-api");
+
+        k8s_id = k8s_select.val();
+        if (k8s_id === "#") {
+            $.MessageBox({
+                buttonDone: "OK",
+                message: "<center>先选择一个集群</center>",
+                queue: true,
+                speed: 200  ,
+                top: "25%"   ,
+            });
+            return null;
+        }
+        url = '/api/cluster/' + k8s_id + url_method;
+        $.ajax({
+            url: url,
+            success: function (ex) {
+                console.log("success");
+                $('#table-div').html(ex);
+            },
+            error: function (ex) {
+                console.log(ex);
+            }
+        })
+
+    }
+</script>
+</body>
+</html>
